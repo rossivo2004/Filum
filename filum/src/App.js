@@ -8,62 +8,59 @@ function App() {
   const [score, setScore] = useState(0);
   const [isEmailSubmitted, setIsEmailSubmitted] = useState(false);
   const [showGuidance, setShowGuidance] = useState(false);
-  const [selectedAnswers, setSelectedAnswers] = useState(Array(data?.questions.length).fill(null)); // Store selected answers
-  const [resultLink, setResultLink] = useState(''); // New state for result link
-  const [answers, setAnswers] = useState([]); // New state to store answers
-  const [result, setResult] = useState(null); // New state to store the result
-  const [showShareOptions, setShowShareOptions] = useState(false); // New state for share options visibility
-  const [showEmailModal, setShowEmailModal] = useState(false); // State for email modal visibility
-  const [shareEmail, setShareEmail] = useState(''); // State for email input
-  const [showShareResultModal, setShowShareResultModal] = useState(false); // New state for share result modal
-  const [showEmailShareModal, setShowEmailShareModal] = useState(false); // New state for email share modal
+  const [selectedAnswers, setSelectedAnswers] = useState(Array(data?.questions.length).fill(null)); 
+  const [resultLink, setResultLink] = useState(''); 
+  const [answers, setAnswers] = useState([]); 
+  const [result, setResult] = useState(null); 
+  const [showShareOptions, setShowShareOptions] = useState(false);
+  const [showEmailModal, setShowEmailModal] = useState(false); 
+  const [shareEmail, setShareEmail] = useState('');
+  const [showShareResultModal, setShowShareResultModal] = useState(false); 
+  const [showEmailShareModal, setShowEmailShareModal] = useState(false); 
 
   useEffect(() => {
     setData(assessmentData);
   }, []);
 
-// ... existing code ...
+
 const handleEmailSubmit = () => {
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Regex for email validation
-  if (emailPattern.test(email)) { // Check if email matches the pattern
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; 
+  if (emailPattern.test(email)) {
     setIsEmailSubmitted(true);
     setShowGuidance(true);
   } else {
-    alert("Vui lòng nhập địa chỉ email hợp lệ."); // Alert for invalid email
+    alert("Vui lòng nhập địa chỉ email hợp lệ."); 
   }
 };
-// ... existing code ...
 
   const handleNextQuestion = () => {
-    // Check if an answer has been selected for the current question
+
     if (selectedAnswers[question] === null) {
-        alert("Vui lòng chọn một câu trả lời."); // Alert if no answer is selected
-        return; // Exit the function if no answer is selected
+        alert("Vui lòng chọn một câu trả lời.");
+        return; 
     }
 
-    console.log("handleNextQuestion called"); // Log khi hàm đợc gọi
-    console.log("Current Question Index:", question); // Log chỉ số câu hỏi hiện tại
-    console.log("Total Questions:", data?.questions.length); // Log tổng số câu hỏi
+    console.log("handleNextQuestion called"); 
+    console.log("Current Question Index:", question); 
+    console.log("Total Questions:", data?.questions.length); 
 
     if (data && question < data.questions.length - 1) {
       setAnswers(prev => {
         const newAnswers = [...prev];
-        newAnswers[question] = selectedAnswers[question] !== null ? selectedAnswers[question] : 0; // Ensure it's a number
+        newAnswers[question] = selectedAnswers[question] !== null ? selectedAnswers[question] : 0; 
         return newAnswers;
       });
 
-      // Ensure selectedAnswers is updated before calculating total score
       const selectedOption = data.questions[question].options.find(option => option.selected);
       setSelectedAnswers(prev => {
         const newAnswers = [...prev];
-        newAnswers[question] = selectedOption ? selectedOption.score : 0; // Ensure score is a number
+        newAnswers[question] = selectedOption ? selectedOption.score : 0; 
         return newAnswers;
       });
 
       setQuestion(question + 1);
     } else {
-      // Calculate total score after all questions are answered
-      const totalScore = selectedAnswers.reduce((total, score) => total + (Number(score) || 0), 0); // Use selectedAnswers instead of answers
+      const totalScore = selectedAnswers.reduce((total, score) => total + (Number(score) || 0), 0); 
       console.log("Total Score:", totalScore);
       setScore(totalScore);
       handleSubmit(totalScore);
@@ -72,14 +69,13 @@ const handleEmailSubmit = () => {
 
   const handleSubmit = (finalScore) => {
     const level = getMaturityLevel(finalScore);
-    setResult(assessmentData.results.find(r => r.level === level)); // Find the result based on the level
+    setResult(assessmentData.results.find(r => r.level === level)); 
     setResultLink(`https://yourapp.com/results?level=${level}`);
   };
 
   
 
   const getMaturityLevel = (score) => {
-    // Logic to determine maturity level based on score
     if (score <= 2) return 1;
     if (score <= 4) return 2;
     if (score <= 6) return 3;
@@ -88,47 +84,44 @@ const handleEmailSubmit = () => {
   };
 
   const handleShareClick = () => {
-    setShowShareResultModal(true); // Show the share result modal
+    setShowShareResultModal(true); 
   };
 
   const handleShareClickFB = () => {
-    const level = getMaturityLevel(score); // Get the maturity level based on the current score
-    const imageUrl = result.icon; // Use the result icon as the image for sharing
+    const level = getMaturityLevel(score); 
 
-    // New logic to select the image based on the score
     let scoreImageUrl;
     switch (level) {
         case 1:
-            scoreImageUrl = 'https://res.cloudinary.com/dmjzp0q0a/image/upload/v1731133276/t6b7jabbqv2tyvhkn3no.png'; // Level 1 image
+            scoreImageUrl = 'https://res.cloudinary.com/dmjzp0q0a/image/upload/v1731133276/t6b7jabbqv2tyvhkn3no.png'; 
             break;
         case 2:
-            scoreImageUrl = 'https://res.cloudinary.com/dmjzp0q0a/image/upload/v1731133276/nk6l6uhocs1jkjxgdwss.png'; // Level 2 image
+            scoreImageUrl = 'https://res.cloudinary.com/dmjzp0q0a/image/upload/v1731133276/nk6l6uhocs1jkjxgdwss.png'; 
             break;
         case 3:
-            scoreImageUrl = 'https://res.cloudinary.com/dmjzp0q0a/image/upload/v1731133276/t2wkifil4rmrdclhg7mm.png'; // Level 3 image
+            scoreImageUrl = 'https://res.cloudinary.com/dmjzp0q0a/image/upload/v1731133276/t2wkifil4rmrdclhg7mm.png'; 
             break;
         case 4:
-            scoreImageUrl = 'https://res.cloudinary.com/dmjzp0q0a/image/upload/v1731133276/egjak1tqbz2novbuxome.png'; // Level 4 image
+            scoreImageUrl = 'https://res.cloudinary.com/dmjzp0q0a/image/upload/v1731133276/egjak1tqbz2novbuxome.png'; 
             break;
         case 5:
-            scoreImageUrl = 'https://res.cloudinary.com/dmjzp0q0a/image/upload/v1731133276/mw38rharnm1tfh9nowgg.png'; // Level 5 image
+            scoreImageUrl = 'https://res.cloudinary.com/dmjzp0q0a/image/upload/v1731133276/mw38rharnm1tfh9nowgg.png'; 
             break;
         default:
-            scoreImageUrl = ''; // Fallback image if needed
+            scoreImageUrl = ''; 
     }
 
-    const shareUrl = scoreImageUrl; // Construct the share URL
+    const shareUrl = scoreImageUrl; 
 
-    // Use the Facebook sharing dialog
     const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}&picture=${encodeURIComponent(scoreImageUrl)}`;
-    window.open(facebookShareUrl, '_blank'); // Open the share dialog in a new tab
+    window.open(facebookShareUrl, '_blank'); 
   };
 
 
 
   const handleEmailShareClick = () => {
-    setShowEmailShareModal(true); // Show the email share modal
-    setShowShareResultModal(false); // Hide the share result modal
+    setShowEmailShareModal(true); 
+    setShowShareResultModal(false); 
   };
 
   return (
@@ -193,12 +186,12 @@ const handleEmailSubmit = () => {
                 
                 <button
                   className='w-full py-4 rounded-lg bg-green-600 flex gap-2 items-center justify-center font-bold'
-                  onClick={handleShareClick} // Show share options
+                  onClick={handleShareClick} 
                 >
                   Chia sẻ
                 </button>
 
-                {showShareResultModal && ( // Conditional rendering of share result modal
+                {showShareResultModal && ( 
                   <div className='absolute bg-white h-[540px] w-[400px] text-black p-4 rounded-lg'>
                     <h3 className='font-bold text-center text-lg mb-4'>Chia sẻ kết quả</h3>
                     <p className='mb-4'>Đây là một số cách bạn có thể chia sẻ với bạn bè và đồng nghiệp của mình:</p>
@@ -218,7 +211,7 @@ const handleEmailSubmit = () => {
                     </div>
                   </div>
                 )}
-                {showEmailShareModal && ( // Conditional rendering of email share modal
+                {showEmailShareModal && ( 
                   <div className='absolute bg-white h-[540px] w-[400px] text-black p-4 rounded-lg'>
                     <h3 className='font-bold text-center text-lg mb-4'>Chia sẻ qua Email</h3>
                     <p className='mb-4'>Vui lòng cung cấp địa chỉ email mà bạn muốn chia sẻ kết quả:</p>
@@ -234,8 +227,8 @@ const handleEmailSubmit = () => {
               <button
                 className='w-full py-2 rounded-lg font-semibold hover:bg-blue-600 hover:text-white text-blue-500'
                 onClick={() => {
-                  setShowEmailShareModal(false); // Close the email modal
-                  setShowShareResultModal(true); // Show the share result modal again
+                  setShowEmailShareModal(false);
+                  setShowShareResultModal(true); 
                 }}
               >
                 Quay lại
@@ -244,7 +237,7 @@ const handleEmailSubmit = () => {
               className='w-full py-2 rounded-lg bg-blue-600 text-white'
               onClick={() => {
                 alert(`Chia sẻ kết quả qua email đến: ${shareEmail}`);
-                setShowEmailShareModal(false); // Close the modal after sharing
+                setShowEmailShareModal(false); 
               }}
             >
               Gửi Email
@@ -263,25 +256,25 @@ const handleEmailSubmit = () => {
                 <h2 className='text-[20px] font-bold text-center'>{data.questions[question].title}</h2>
                 <div className='flex flex-col gap-4 w-full'>
                   {data.questions[question].options.map((option) => (
-                    <label key={option.id} className={`w-full py-4 rounded-lg border border-white flex gap-2 items-center justify-center font-bold ${selectedAnswers[question] === option.score ? 'bg-blue-500 text-white' : 'bg-transparent hover:border-blue-500 hover:text-blue-500'}`}>
+                    <label key={option.id} className={`w-full py-4 rounded-lg border border-white flex gap-2 items-center justify-center font-bold cursor-pointer ${selectedAnswers[question] === option.score ? 'bg-blue-500 text-white' : 'bg-transparent hover:border-blue-500 hover:text-blue-500'}`}>
                       <input 
                       required
                         type="radio" 
                         name={`question-${question}`} 
                         value={option.score} 
-                        checked={selectedAnswers[question] === option.score} // Check if this option is selected
+                        checked={selectedAnswers[question] === option.score} 
                         onChange={() => {
                           setSelectedAnswers(prev => {
                             const newAnswers = [...prev];
-                            newAnswers[question] = option.score; // Update selected answer
+                            newAnswers[question] = option.score;
                             return newAnswers;
                           });
                           console.log("Selected answer for question:", question, "is", option.score);
                           if (question < data.questions.length - 1) {
-                            setQuestion(question + 1); // Move to the next question
+                            setQuestion(question + 1); 
                           }
                         }} 
-                        className="hidden" // Hide the default radio button
+                        className="hidden" 
                       />
                       {option.text}
                     </label>
@@ -299,7 +292,7 @@ const handleEmailSubmit = () => {
                   {question === data.questions.length - 1 ? (
                     <button
                       className='w-full py-4 rounded-lg bg-blue-600 flex gap-2 items-center justify-center font-bold'
-                      onClick={handleNextQuestion} // Call handleSubmit instead of handleNextQuestion
+                      onClick={handleNextQuestion}
                     >
                       Gửi
                     </button>
